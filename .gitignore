@@ -1,0 +1,9 @@
+.vscode
+
+# idea project files
+.idea
+
+# netbeans project files
+nbproject
+/.project
+/transformed.template
