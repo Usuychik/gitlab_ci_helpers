@@ -17,8 +17,8 @@
 stages:
   - build
 variables:
-  REGISTRY_HOST: cloudops-registry.nurd.cloud
-  PROJECT: cww
+  REGISTRY_HOST: registry.com
+  PROJECT: zzz
 
 build_dev:
   extends:
