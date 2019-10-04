@@ -1,0 +1,26 @@
+.deploy_template:
+  stage: deploy
+  tags:
+    - docker
+  image: "usuychick/gitlab-ci-helper"
+  script: |
+    export IMAGE="$REGISTRY_HOST/$PROJECT/$REGISTRY_ENV/$COMPONENT:$CI_COMMIT_SHORT_SHA"
+    envsubst < deployment.yml | kubectl apply --kubeconfig=$KUBECONFIG -f
+
+# Example usage
+stages:
+  - deploy
+variables:
+  REGISTRY_HOST: cloudops-registry.nurd.cloud
+  PROJECT: cww
+
+deploy_dev:
+  extends:
+    - .dev_definitions
+    - .deploy_template
+  before_script:
+    export KUBECONFIG=k8s-$RANDOM.conf
+    cat $K8S_CONFIG_DEV > $KUBECONFIG
+  variables:
+    REGISTRY_ENV: dev
+    COMPONENT: xxx

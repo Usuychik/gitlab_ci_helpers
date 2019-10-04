@@ -1,0 +1,36 @@
+.dev_definitions:
+  environment:
+    name: "dev"
+  only:
+    - /^dev_([0-9]).+([0-9]+)+(-rc[0-9])?$/
+  except:
+    - branches
+  allow_failure: false
+
+.qa_definitions:
+  environment:
+    name: "qa"
+  only:
+    - /^qa_([0-9]).+([0-9]+)+(-rc[0-9])?$/
+  except:
+    - branches
+  allow_failure: false
+
+.stage_definitions:
+  environment:
+    name: "stage"
+  only:
+    - /^([0-9]).+([0-9]+)+(-rc[0-9])?$/
+  except:
+    - branches
+
+.prod_definitions:
+  environment:
+    name: "prod"
+  only:
+    - /^([0-9]).+([0-9]+)+(-rc[0-9])?$/
+  except:
+    - branches
+  when: manual
+  allow_failure: false
+

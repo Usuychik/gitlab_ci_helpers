@@ -64,3 +64,11 @@ function gke_set_config(){
     gcloud --quiet config set compute/zone ${3}
     gcloud --quiet container clusters get-credentials ${4}
 }
+
+# PARAMS
+# $1 = k8s namespace
+# $2 = k8s deployment name
+function reload_pods_in_deployment(){
+  kubectl patch deployment/$2 -n $1 -p \
+     "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"dummy-date\":\"date +'%s'\"}}}}}"
+}

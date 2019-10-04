@@ -1,0 +1,29 @@
+.build_template:
+  stage: build
+  tags:
+    - shell
+  script:
+    - docker login -u $REGISTRY_USER -p $REGISTRY_PASSWORD $REGISTRY_HOST
+    - IMAGE="$REGISTRY_HOST/$PROJECT/$REGISTRY_ENV/$COMPONENT:$CI_COMMIT_SHORT_SHA"
+    - IMAGE_LATEST="$REGISTRY_HOST/$PROJECT/$REGISTRY_ENV/$COMPONENT:latest"
+    - docker build --no-cache -t $IMAGE ./
+    - docker push $IMAGE
+    - docker tag $IMAGE $IMAGE_LATEST
+    - docker push $IMAGE_LATEST
+    - docker rmi $IMAGE
+    - docker rmi $IMAGE_LATEST
+
+# Example usage
+stages:
+  - build
+variables:
+  REGISTRY_HOST: cloudops-registry.nurd.cloud
+  PROJECT: cww
+
+build_dev:
+  extends:
+    - .dev_definitions
+    - .build_template
+  variables:
+    REGISTRY_ENV: dev
+    COMPONENT: xxx
