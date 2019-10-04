@@ -76,18 +76,28 @@ function reload_pods_in_deployment(){
   else
     wait_time=60*$3
   fi
+
+  # check if deployment exists
+  set +e
+  (kubectl get deployment/$2 -n $1)
+  if [[ $? -ne 0 ]]
+  then
+    return 0
+  fi
+  set -e
+  dummy_date=$(date +'%s')
   kubectl patch deployment/$2 -n $1 -p \
-     "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"dummy-date\":\"date +'%s'\"}}}}}"
+     "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"dummy-date\":\"$dummy_date\"}}}}}"
 
   SECONDS=0
   while [ $SECONDS -lt $wait_time ]
   do
     if kubectl rollout status deployment/$2 -n $1 | grep "successfully";
     then
-      exit 0
+      return 0
     else
       sleep 10
     fi
   done
-  exit 1
+  return 1
 }
