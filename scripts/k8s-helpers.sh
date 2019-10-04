@@ -68,7 +68,26 @@ function gke_set_config(){
 # PARAMS
 # $1 = k8s namespace
 # $2 = k8s deployment name
+# $3 = optional wait time in minutes, default 10
 function reload_pods_in_deployment(){
+  if [ -z ${3+x} ]
+  then
+    wait_time=600
+  else
+    wait_time=60*$3
+  fi
   kubectl patch deployment/$2 -n $1 -p \
      "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"dummy-date\":\"date +'%s'\"}}}}}"
+
+  SECONDS=0
+  while [ $SECONDS -lt $wait_time ]
+  do
+    if kubectl rollout status deployment/$2 -n $1 | grep "successfully";
+    then
+      exit 0
+    else
+      sleep 10
+    fi
+  done
+  exit 1
 }
