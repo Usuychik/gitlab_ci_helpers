@@ -72,9 +72,9 @@ function gke_set_config(){
 function reload_pods_in_deployment(){
   if [ -z ${3+x} ]
   then
-    wait_time=600
+    timeout=10m
   else
-    wait_time=60*$3
+    timeout=$3m
   fi
 
   # check if deployment exists
@@ -89,15 +89,7 @@ function reload_pods_in_deployment(){
   kubectl patch deployment/$2 -n $1 -p \
      "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"dummy-date\":\"$dummy_date\"}}}}}"
 
-  SECONDS=0
-  while [ $SECONDS -lt $wait_time ]
-  do
-    if kubectl rollout status deployment/$2 -n $1 | grep "successfully";
-    then
-      return 0
-    else
-      sleep 10
-    fi
-  done
-  return 1
+  kubectl rollout status deployment/$2 -n $1 --timeout=$timeout
 }
+
+
