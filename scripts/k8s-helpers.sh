@@ -48,7 +48,7 @@ function deploy_configmap_from_conf_file() {
         kubectl create configmap $2 --namespace=$1 --from-file=$4=$3  -o yaml --dry-run | kubectl replace -f -
     else
         set -e
-        kubectl create configmap $2 --namespace=$1 --from-env-file=$3
+        kubectl create configmap $2 --namespace=$1 --from-file=$4=$3
     fi
 
 }
