@@ -92,4 +92,11 @@ function reload_pods_in_deployment(){
   kubectl rollout status deployment/$2 -n $1 --timeout=$timeout
 }
 
-
+# PARAMS
+# $1 = result of kubectl apply
+function check_if_deployment_changed(){
+  set +e
+  (echo $1 | grep -q "deployment.apps/[A-Za-z-]* unchanged")
+  echo $?
+  set -e
+}
